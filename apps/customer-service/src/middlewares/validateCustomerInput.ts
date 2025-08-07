@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 export const validateCustomerInput = (req: Request, res: Response, next: NextFunction) => {
-  const { email, name } = req.body;
+  const { email, name, phone } = req.body;
 
   // Email validation
   if (!email || typeof email !== 'string') {

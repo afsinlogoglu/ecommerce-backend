@@ -9,17 +9,17 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 export const AuthService = {
   async register(email: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({
+    const user = await prisma.customer.create({
       data: { email, password: hashedPassword },
     });
     return user;
   },
 
   async login(email: string, password: string) {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.customer.findUnique({ where: { email } });
     if (!user) throw new Error("Invalid credentials");
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, customer.password);
     if (!isMatch) throw new Error("Invalid credentials");
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
