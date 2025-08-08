@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-
+import { redisService } from './redis.service';
 const prisma = new PrismaClient();
 
 export interface CreateProductData {
@@ -69,7 +69,7 @@ export class ProductService {
           }
         }
       });
-
+      await redisService.delPattern('product:*');
       return product;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
