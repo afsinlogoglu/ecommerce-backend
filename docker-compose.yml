@@ -60,6 +60,26 @@ services:
       timeout: 10s
       retries: 3
 
+  # Product Service
+  product-service:
+    build:
+      context: ./apps/product-service
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/product_service
+      PORT: 4003
+      NODE_ENV: development
+    ports:
+      - "4003:4003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # API Gateway (placeholder for future implementation)
   api-gateway:
     image: nginx:alpine
@@ -70,6 +90,7 @@ services:
     depends_on:
       - auth-service
       - customer-service
+      - product-service
 
 volumes:
   postgres_data: 

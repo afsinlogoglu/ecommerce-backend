@@ -68,7 +68,7 @@ export const CustomerController = {
   async updateCustomer(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      
+
       if (!id) {
         return res.status(400).json({
           success: false,
@@ -77,6 +77,7 @@ export const CustomerController = {
       }
 
       const { email, name, phone } = req.body;
+
       const customer = await CustomerService.updateCustomer(id, { email, name, phone });
       res.json({
         success: true,
@@ -93,7 +94,7 @@ export const CustomerController = {
   async deleteCustomer(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      
+      console.log(req.params);
       if (!id) {
         return res.status(400).json({
           success: false,

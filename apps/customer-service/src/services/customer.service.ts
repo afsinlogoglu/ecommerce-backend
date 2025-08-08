@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -27,9 +27,14 @@ export class CustomerService {
           phone: data.phone || null
         }
       });
-
+  
       return customer;
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new Error('Customer with this email already exists');
+        }
+      }
       if (error instanceof Error) {
         throw new Error(`Failed to create customer: ${error.message}`);
       }
@@ -70,9 +75,17 @@ export class CustomerService {
         where: { id },
         data
       });
-
+  
       return customer;
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error('Customer not found');
+        }
+        if (error.code === 'P2002') {
+          throw new Error('Customer with this email already exists');
+        }
+      }
       if (error instanceof Error) {
         throw new Error(`Failed to update customer: ${error.message}`);
       }
@@ -86,6 +99,11 @@ export class CustomerService {
         where: { id }
       });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new Error('Customer not found');
+        }
+      }
       if (error instanceof Error) {
         throw new Error(`Failed to delete customer: ${error.message}`);
       }
