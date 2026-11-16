@@ -147,6 +147,7 @@ export class ProductService {
         }
       });
 
+      await redisService.delPattern('product:*');
       return product;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -169,6 +170,7 @@ export class ProductService {
       await prisma.product.delete({
         where: { id }
       });
+      await redisService.delPattern('product:*');
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {

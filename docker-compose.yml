@@ -67,12 +67,15 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://postgres:password@postgres:5432/product_service
+      REDIS_HOST: redis
       PORT: 4003
       NODE_ENV: development
     ports:
       - "4003:4003"
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4003/health"]
@@ -92,22 +95,19 @@ services:
       - customer-service
       - product-service
 
-volumes:
-  postgres_data: 
-
-  # Redis Cache
-redis:
-  image: redis:7-alpine
-  ports:
-    - "6379:6379"
-  volumes:
-    - redis_data:/data
-  command: redis-server --appendonly yes
-  healthcheck:
-    test: ["CMD", "redis-cli", "ping"]
-    interval: 10s
-    timeout: 5s
-    retries: 3
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
+  postgres_data:
   redis_data:

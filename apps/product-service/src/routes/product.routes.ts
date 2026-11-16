@@ -5,14 +5,13 @@ import { cacheMiddleware } from "../middlewares/cache.middleware";
 
 const router = Router();
 
-// Cache'li route'lar
+// Static paths must be registered before "/:id", or Express treats "search" as an id.
 router.get("/", cacheMiddleware('all'), ProductController.getAllProducts);
-router.get("/:id", cacheMiddleware('detail'), ProductController.getProductById);
-router.get("/search", cacheMiddleware('search'), ProductController.searchProducts)
-// CRUD operations
-router.post("/", validateProductInput, ProductController.createProduct);
+router.get("/search", cacheMiddleware('search'), ProductController.searchProducts);
 router.get("/category/:categoryId", ProductController.getProductsByCategory);
+router.get("/:id", cacheMiddleware('detail'), ProductController.getProductById);
+router.post("/", validateProductInput, ProductController.createProduct);
 router.put("/:id", validateProductUpdate, ProductController.updateProduct);
 router.delete("/:id", ProductController.deleteProduct);
 
-export default router; 
+export default router;
